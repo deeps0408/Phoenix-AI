@@ -5,8 +5,11 @@ import { cn } from '@/lib/utils';
 const links = [
   { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
   { name: 'AI Teacher', href: '/teacher', icon: BookOpen },
-  { name: 'Language Translation', href: '/language', icon: Globe2 },
-  { name: 'Assessment & Quizzes', href: '/assessment', icon: ClipboardCheck },
+  { name: 'Language Translator', href: '/translator', icon: Globe2 },
+  { name: 'Assessment & Quizzes', href: '/quiz', icon: ClipboardCheck },
+  { name: 'Smart Notes', href: '/notes', icon: Library },
+  { name: 'Analytics', href: '/analytics', icon: LayoutDashboard },
+  { name: 'Achievements', href: '/achievements', icon: BrainCircuit },
   { name: 'Catch-Up Planner', href: '/catch-up', icon: Map },
   { name: 'Mentor', href: '/mentor', icon: GraduationCap },
   { name: 'Career Guidance', href: '/career', icon: BrainCircuit },
@@ -43,7 +46,11 @@ export function Sidebar() {
         })}
       </nav>
       
-      <div className="p-4 border-t border-border/40">
+      <div className="p-4 border-t border-border/40 space-y-2">
+        <Link href="/profile" className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-all duration-200">
+          <Heart className="size-5" />
+          <span className="font-medium">Profile</span>
+        </Link>
         <Link href="/settings" className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-all duration-200">
           <Settings className="size-5" />
           <span className="font-medium">Settings</span>
