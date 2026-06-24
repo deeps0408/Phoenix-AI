@@ -2,7 +2,7 @@
 
 > **"No child should fall behind because life got in the way."**
 
-Phoenix AI is a modern, hackathon-winning AI multi-agent education platform designed for underserved students facing challenges like lack of teachers, language barriers, interrupted education, poor internet connectivity, and limited parental support. 
+Phoenix AI is a modern, multi-agent education platform designed for underserved students facing challenges like lack of teachers, language barriers, interrupted education, poor internet connectivity, and limited parental support. 
 
 Our core theme is **"Agents for Good"**—focusing on accessibility, personalization, and helping students recover lost learning.
 
