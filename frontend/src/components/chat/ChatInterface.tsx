@@ -62,7 +62,8 @@ export function ChatInterface({ defaultAgent = "Phoenix Orchestrator" }: { defau
     setIsLoading(true);
 
     try {
-      const response = await fetch("http://localhost:8000/api/chat", {
+      const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
+      const response = await fetch(`${API_URL}/api/chat`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -102,7 +103,7 @@ export function ChatInterface({ defaultAgent = "Phoenix Orchestrator" }: { defau
         {
           role: "assistant",
           content:
-            "⚠️ Unable to connect to the backend. Please make sure the FastAPI server is running at http://localhost:8000.",
+            "⚠️ Unable to connect to the backend. Please ensure the FastAPI server is running.",
           timestamp: Date.now(),
         },
       ]);

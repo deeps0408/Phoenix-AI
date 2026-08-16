@@ -30,7 +30,8 @@ export default function TranslatorPage() {
     const prompt = `Translate the following text from ${sourceLang} to ${targetLang}:\n\n"${inputText}"`;
 
     try {
-      const res = await fetch("http://localhost:8000/api/translate", {
+      const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
+      const res = await fetch(`${API_URL}/api/translate`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -46,7 +47,7 @@ export default function TranslatorPage() {
     } catch {
       // Fallback: use the general chat endpoint with a clear translation prompt
       try {
-        const res = await fetch("http://localhost:8000/api/chat", {
+        const res = await fetch(`${API_URL}/api/chat`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -58,7 +59,7 @@ export default function TranslatorPage() {
         const data = await res.json();
         setTranslatedText(data.response);
       } catch {
-        setError("⚠️ Could not connect to the backend. Make sure the server is running at http://localhost:8000.");
+        setError("⚠️ Could not connect to the backend. Please ensure the FastAPI server is running.");
       }
     } finally {
       setIsLoading(false);
