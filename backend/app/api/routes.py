@@ -24,15 +24,27 @@ async def chat_endpoint(request: ChatRequest):
             "context": request.context or {}
         })
         
-        # Extract the final AI message
-        final_message = result["messages"][-1].content
+        # Extract the final AI message — handle both string and list (Interactions API) formats
+        raw_content = result["messages"][-1].content
+        if isinstance(raw_content, list):
+            # New Interactions API format: [{'type': 'text', 'text': '...'}]
+            final_message = " ".join(
+                part.get("text", "") for part in raw_content if isinstance(part, dict)
+            )
+        else:
+            final_message = raw_content
         
         return ChatResponse(response=final_message, agent_used="orchestrator")
     except Exception as e:
         error_msg = str(e)
-        if "API key" in error_msg or "INVALID_ARGUMENT" in error_msg:
+        if "API key" in error_msg or "INVALID_ARGUMENT" in error_msg or "API_KEY_INVALID" in error_msg:
             return ChatResponse(
-                response="Please add your GEMINI_API_KEY to the backend/.env file to start chatting!", 
+                response="❌ Invalid or missing Gemini API key. Please update your GEMINI_API_KEY in backend/.env with a valid key from https://aistudio.google.com/app/apikey", 
+                agent_used="System"
+            )
+        if "NOT_FOUND" in error_msg or "no longer available" in error_msg:
+            return ChatResponse(
+                response="❌ The AI model is unavailable. Please contact support.", 
                 agent_used="System"
             )
         return ChatResponse(
