@@ -285,8 +285,4 @@ curl -X POST http://localhost:8000/api/translate \
 
 ---
 
-## 📄 License
 
-Built with ❤️ for the **Agents for Good Hackathon 2026**.
-
-*"No child should fall behind because life got in the way."*
