@@ -1,5 +1,6 @@
 import { Sidebar } from '@/components/layout/Sidebar';
 import { Topbar } from '@/components/layout/Topbar';
+import { XPToastContainer } from '@/components/ui/XPToast';
 
 export default function DashboardLayout({
   children,
@@ -18,6 +19,7 @@ export default function DashboardLayout({
         <main className="flex-1 overflow-y-auto p-6">
           {children}
         </main>
+        <XPToastContainer />
       </div>
     </div>
   );

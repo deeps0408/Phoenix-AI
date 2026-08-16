@@ -6,12 +6,11 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
-  saveNote,
-  generateNoteId,
-  deriveTitleFromMessages,
-  type ChatMessage,
-  type SmartNote,
+  saveNote, generateNoteId, deriveTitleFromMessages,
+  type ChatMessage, type SmartNote,
 } from "@/lib/notes";
+import { awardXP } from "@/lib/gamification";
+import { showXPToast } from "@/components/ui/XPToast";
 
 export function ChatInterface({ defaultAgent = "Phoenix Orchestrator" }: { defaultAgent?: string }) {
   const [messages, setMessages] = useState<ChatMessage[]>([
@@ -86,6 +85,16 @@ export function ChatInterface({ defaultAgent = "Phoenix Orchestrator" }: { defau
           timestamp: Date.now(),
         },
       ]);
+
+      // Award XP for interacting with an AI agent
+      const result = awardXP("message_sent");
+      showXPToast({
+        xp: result.xpEarned,
+        reason: "Chat",
+        levelUp: result.levelUp,
+        newLevel: result.newLevel,
+        badgeName: result.newBadges[0]?.name,
+      });
     } catch (error) {
       console.error("Error sending message:", error);
       setMessages((prev) => [
