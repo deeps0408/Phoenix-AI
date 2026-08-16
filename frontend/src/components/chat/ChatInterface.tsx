@@ -1,34 +1,63 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { Send, Bot } from "lucide-react";
+import { Send, Bot, BookmarkCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-
-interface Message {
-  role: "user" | "assistant";
-  content: string;
-  agentName?: string;
-}
+import {
+  saveNote,
+  generateNoteId,
+  deriveTitleFromMessages,
+  type ChatMessage,
+  type SmartNote,
+} from "@/lib/notes";
 
 export function ChatInterface({ defaultAgent = "Phoenix Orchestrator" }: { defaultAgent?: string }) {
-  const [messages, setMessages] = useState<Message[]>([
-    { role: "assistant", content: `Hello! I'm your ${defaultAgent}. How can I help you learn today?` }
+  const [messages, setMessages] = useState<ChatMessage[]>([
+    {
+      role: "assistant",
+      content: `Hello! I'm your ${defaultAgent}. How can I help you learn today?`,
+      timestamp: Date.now(),
+    },
   ]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [savedToast, setSavedToast] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const noteIdRef = useRef<string>(generateNoteId());
+  const agentUsedRef = useRef<string>("orchestrator");
 
-  // Auto-scroll to the latest message
+  // Auto-scroll
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, isLoading]);
 
+  // Auto-save note whenever messages change (after first user message)
+  useEffect(() => {
+    const hasUser = messages.some((m) => m.role === "user");
+    if (!hasUser) return;
+
+    const note: SmartNote = {
+      id: noteIdRef.current,
+      title: deriveTitleFromMessages(messages),
+      topic: defaultAgent,
+      messages,
+      createdAt: messages[0]?.timestamp ?? Date.now(),
+      updatedAt: Date.now(),
+      agentUsed: agentUsedRef.current,
+    };
+    saveNote(note);
+  }, [messages, defaultAgent]);
+
   const sendMessage = async () => {
     if (!input.trim()) return;
 
-    const userMessage = { role: "user" as const, content: input };
+    const userMessage: ChatMessage = {
+      role: "user",
+      content: input,
+      timestamp: Date.now(),
+    };
     setMessages((prev) => [...prev, userMessage]);
     setInput("");
     setIsLoading(true);
@@ -36,41 +65,58 @@ export function ChatInterface({ defaultAgent = "Phoenix Orchestrator" }: { defau
     try {
       const response = await fetch("http://localhost:8000/api/chat", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           message: userMessage.content,
           user_id: "demo-user-123",
         }),
       });
 
-      if (!response.ok) {
-        throw new Error(`Server responded with status ${response.status}`);
-      }
+      if (!response.ok) throw new Error(`Server responded with status ${response.status}`);
 
       const data = await response.json();
-      
+      agentUsedRef.current = data.agent_used ?? "orchestrator";
+
       setMessages((prev) => [
         ...prev,
-        { 
-          role: "assistant", 
+        {
+          role: "assistant",
           content: data.response,
-          agentName: data.agent_used
-        }
+          agentName: data.agent_used,
+          timestamp: Date.now(),
+        },
       ]);
     } catch (error) {
       console.error("Error sending message:", error);
       setMessages((prev) => [
         ...prev,
-        { 
-          role: "assistant", 
-          content: "⚠️ Unable to connect to the backend. Please make sure the FastAPI server is running at http://localhost:8000." 
-        }
+        {
+          role: "assistant",
+          content:
+            "⚠️ Unable to connect to the backend. Please make sure the FastAPI server is running at http://localhost:8000.",
+          timestamp: Date.now(),
+        },
       ]);
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleSaveNote = () => {
+    const hasUser = messages.some((m) => m.role === "user");
+    if (!hasUser) return;
+    const note: SmartNote = {
+      id: noteIdRef.current,
+      title: deriveTitleFromMessages(messages),
+      topic: defaultAgent,
+      messages,
+      createdAt: messages[0]?.timestamp ?? Date.now(),
+      updatedAt: Date.now(),
+      agentUsed: agentUsedRef.current,
+    };
+    saveNote(note);
+    setSavedToast(true);
+    setTimeout(() => setSavedToast(false), 2500);
   };
 
   return (
@@ -80,14 +126,25 @@ export function ChatInterface({ defaultAgent = "Phoenix Orchestrator" }: { defau
         <div className="size-10 rounded-full bg-gradient-to-br from-brand-blue to-brand-purple flex items-center justify-center text-white">
           <Bot className="size-5" />
         </div>
-        <div>
+        <div className="flex-1">
           <h3 className="font-bold">{defaultAgent}</h3>
           <p className="text-xs text-muted-foreground flex items-center gap-1">
             <span className="size-2 rounded-full bg-green-500 animate-pulse" /> Online
           </p>
         </div>
+        {/* Save to Notes button */}
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={handleSaveNote}
+          className="gap-2 text-xs"
+          title="Save this session as a Smart Note"
+        >
+          <BookmarkCheck className="size-3.5" />
+          {savedToast ? "Saved! ✓" : "Save Note"}
+        </Button>
       </div>
-      
+
       {/* Messages Area */}
       <div className="flex-1 overflow-y-auto p-4 space-y-6">
         {messages.map((msg, idx) => (
@@ -104,7 +161,7 @@ export function ChatInterface({ defaultAgent = "Phoenix Orchestrator" }: { defau
                 </div>
               )}
             </Avatar>
-            
+
             <div className="space-y-1 flex-1 min-w-0">
               <div className={`p-3 rounded-2xl ${msg.role === "user" ? "bg-brand-blue text-white rounded-tr-sm" : "bg-accent/50 text-foreground rounded-tl-sm"}`}>
                 <p className="text-sm leading-relaxed whitespace-pre-wrap break-words">{msg.content}</p>
@@ -131,27 +188,26 @@ export function ChatInterface({ defaultAgent = "Phoenix Orchestrator" }: { defau
             </div>
           </div>
         )}
-        
-        {/* Scroll anchor */}
+
         <div ref={messagesEndRef} />
       </div>
-      
+
       {/* Input Area */}
       <div className="p-4 border-t border-border/40 bg-background/50">
-        <form 
+        <form
           onSubmit={(e) => { e.preventDefault(); sendMessage(); }}
           className="flex gap-2"
         >
-          <Input 
+          <Input
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            placeholder="Ask a question or request a study plan..." 
+            placeholder="Ask a question or request a study plan..."
             className="flex-1 bg-accent/30 border-white/10"
             disabled={isLoading}
           />
-          <Button 
-            type="submit" 
-            disabled={isLoading || !input.trim()} 
+          <Button
+            type="submit"
+            disabled={isLoading || !input.trim()}
             className="bg-brand-blue hover:bg-brand-blue/90 text-white"
           >
             <Send className="size-4" />
