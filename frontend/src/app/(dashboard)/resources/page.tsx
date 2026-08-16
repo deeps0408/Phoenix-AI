@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ChatInterface } from "@/components/chat/ChatInterface";
-import { Youtube, BookOpen, Globe, GraduationCap, ExternalLink } from "lucide-react";
+import { PlayCircle, BookOpen, Globe, GraduationCap, ExternalLink } from "lucide-react";
 
 const SUBJECTS = ["All", "Mathematics", "Science", "English", "History", "Computer Science", "Hindi"];
 
@@ -26,7 +26,7 @@ const RESOURCES = [
 ];
 
 const TYPE_CONFIG: Record<string, { icon: React.ElementType; color: string; bg: string; label: string }> = {
-  youtube: { icon: Youtube, color: "text-red-500", bg: "bg-red-500/10", label: "YouTube" },
+  youtube: { icon: PlayCircle, color: "text-red-500", bg: "bg-red-500/10", label: "YouTube" },
   course: { icon: GraduationCap, color: "text-brand-purple", bg: "bg-brand-purple/10", label: "Course" },
   website: { icon: Globe, color: "text-brand-blue", bg: "bg-brand-blue/10", label: "Website" },
   book: { icon: BookOpen, color: "text-brand-orange", bg: "bg-brand-orange/10", label: "Book" },
