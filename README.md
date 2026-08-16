@@ -4,7 +4,7 @@
 
 Phoenix AI is a **multilingual, multi-agent AI education platform** designed for underserved students facing challenges like missed school, lack of teachers, language barriers, poor internet connectivity, and limited parental support.
 
-Built for the **Agents for Good Hackathon 2026** — our core mission is accessibility, personalization, and helping students recover lost learning through intelligent AI agents.
+
 
 [![GitHub](https://img.shields.io/badge/GitHub-deeps0408%2FPhoenix--AI-blue?logo=github)](https://github.com/deeps0408/Phoenix-AI)
 [![Next.js](https://img.shields.io/badge/Next.js-16-black?logo=next.js)](https://nextjs.org)
