@@ -8,8 +8,11 @@ import { cn } from '@/lib/utils';
 const links = [
   { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
   { name: 'AI Teacher', href: '/teacher', icon: BookOpen },
-  { name: 'Language Translation', href: '/language', icon: Globe2 },
-  { name: 'Assessment & Quizzes', href: '/assessment', icon: ClipboardCheck },
+  { name: 'Language Translator', href: '/translator', icon: Globe2 },
+  { name: 'Assessment & Quizzes', href: '/quiz', icon: ClipboardCheck },
+  { name: 'Smart Notes', href: '/notes', icon: Library },
+  { name: 'Analytics', href: '/analytics', icon: LayoutDashboard },
+  { name: 'Achievements', href: '/achievements', icon: BrainCircuit },
   { name: 'Catch-Up Planner', href: '/catch-up', icon: Map },
   { name: 'Mentor', href: '/mentor', icon: GraduationCap },
   { name: 'Career Guidance', href: '/career', icon: BrainCircuit },
