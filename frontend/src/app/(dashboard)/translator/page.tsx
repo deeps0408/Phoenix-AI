@@ -28,9 +28,9 @@ export default function TranslatorPage() {
     setTranslatedText("");
 
     const prompt = `Translate the following text from ${sourceLang} to ${targetLang}:\n\n"${inputText}"`;
+    const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
 
     try {
-      const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
       const res = await fetch(`${API_URL}/api/translate`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },

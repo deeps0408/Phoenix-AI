@@ -46,8 +46,9 @@ export function XPToast({ xp, reason, levelUp, newLevel, badgeName, onDone }: XP
           {/* Level up */}
           {levelUp && (
             <motion.div
-              initial={{ x: 40, delay: 0.1 }}
+              initial={{ x: 40 }}
               animate={{ x: 0 }}
+              transition={{ delay: 0.1 }}
               className="flex items-center gap-2 bg-gradient-to-r from-brand-purple to-brand-blue text-white px-4 py-2 rounded-full shadow-lg font-bold text-sm"
             >
               <Trophy className="w-4 h-4" />
